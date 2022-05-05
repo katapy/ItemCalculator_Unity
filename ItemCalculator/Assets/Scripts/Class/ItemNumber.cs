@@ -17,7 +17,11 @@ namespace ItemCalculator
         {
             get
             {
-                return float.Parse(GetComponent<InputField>().text);
+                if (float.TryParse(GetComponent<InputField>().text, out float f))
+                {
+                    return f;
+                }
+                return null;
             }
             set
             {

@@ -10,6 +10,9 @@ namespace ItemCalculator
     /// </summary>
     public class ItemName : MonoBehaviour
     {
+        /// <summary>
+        /// Item name.
+        /// </summary>
         public string Name
         {
             get

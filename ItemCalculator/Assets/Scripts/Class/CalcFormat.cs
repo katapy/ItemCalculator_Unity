@@ -5,28 +5,31 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using UnityEngine;
+using UnityFileName;
 
 namespace ItemCalculator
 {
     /// <summary>
-    /// Items
+    /// Calclation format.
     /// </summary>
     [Serializable]
-    public class Items
+    public class CalcFormat
     {
-        public Items()
+        public CalcFormat()
         {
             this.ItemList = new List<Item>();
             this.Title = "";
+            this.Result = new Item();
         }
 
-        public Items(string itemListName)
+        public CalcFormat(string titleName)
         {
-            this.Title = itemListName;
-            string itemsJson = File.ReadAllText(GetFullPath());
-            Items items = JsonConvert.DeserializeObject<Items>(itemsJson);
-            this.ItemList = items.ItemList;
-            this.Title = items.Title;
+            this.Title = titleName;
+            string formatJson = File.ReadAllText(GetFullPath());
+            CalcFormat format = JsonConvert.DeserializeObject<CalcFormat>(formatJson);
+            this.ItemList = format.ItemList;
+            this.Title = format.Title;
+            this.Result = format.Result;
         }
 
         /// <summary>
@@ -48,13 +51,19 @@ namespace ItemCalculator
             get;
         }
 
+        public Item Result
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// Get file path.
         /// </summary>
         /// <returns></returns>
-        private string GetPath()
+        public static string GetPath()
         {
-            return Application.persistentDataPath + "/ItemCalculator/items/";
+            return Application.persistentDataPath + "/ItemCalculator/CalcFormat/";
         }
 
         /// <summary>
@@ -67,6 +76,7 @@ namespace ItemCalculator
             {
                 throw new ArgumentNullException(nameof(Title));
             }
+            FileNameChecker.CheckInvalidFileName(Title);
             if (!Directory.Exists(GetPath()))
             {
                 Directory.CreateDirectory(GetPath());
@@ -85,7 +95,7 @@ namespace ItemCalculator
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
-            
+
             File.WriteAllText(GetFullPath(), JsonConvert.SerializeObject(this, settings));
         }
     }
