@@ -20,8 +20,7 @@ public class AgendaSceneManager : MonoBehaviour
         defaultButton.GetComponent<LoadSceneButton>().SceneObj
                     = new object[] { false };
 
-        string[] files = Directory.GetFiles(
-            Application.persistentDataPath + "/ItemCalculator/items/", "*");
+        string[] files = Directory.GetFiles( CalcFormat.GetPath(), "*");
         if (files.Length > 0)
         {
             foreach (var filePath in files)

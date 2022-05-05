@@ -8,6 +8,7 @@ using SceneTool;
 
 public class GameManager : MonoBehaviour, ILoadScene
 {
+    #region SerializeField.
     [SerializeField]
     private GameObject itemPanels;
 
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour, ILoadScene
 
     [SerializeField]
     private Button customButton = null;
+    #endregion SerializeField.
 
     // Start is called before the first frame update
     void Start()
@@ -195,8 +197,8 @@ public class GameManager : MonoBehaviour, ILoadScene
         try
         {
             int count = 0;
-            Items items = new Items();
-            items.Title = itemNameInputField.text;
+            CalcFormat format = new CalcFormat();
+            format.Title = itemNameInputField.text;
             for (var i = 0; i < itemPanels.transform.childCount; i++)
             {
                 if (itemPanels.transform.GetChild(i).name != "ItemPanel")
@@ -215,11 +217,19 @@ public class GameManager : MonoBehaviour, ILoadScene
                 }
                 item.ItemName = itemPanels.transform.GetChild(i).
                         GetComponentInChildren<ItemName>().Name;
+                item.Number = itemPanels.transform.GetChild(i).
+                        GetComponentInChildren<ItemNumber>().Number;
                 item.Unit = itemPanels.transform.GetChild(i).
                         GetComponentInChildren<ItemUnit>().Unit;
-                items.ItemList.Add(item);
+                format.ItemList.Add(item);
             }
-            items.Save();
+
+            format.Result.ItemName = resultItemPanel.
+                GetComponentInChildren<ItemName>().Name;
+            format.Result.Unit = resultItemPanel.
+                GetComponentInChildren<ItemUnit>().Unit;
+
+            format.Save();
 
             SceneManager.LoadScene("Agenda");
         }
@@ -227,6 +237,11 @@ public class GameManager : MonoBehaviour, ILoadScene
         {
             string message = $"{e.ParamName} is not input.";
             GetComponent<PopupMessage>().ShowPopup(message, PopupMessage.MessageType.error);
+            Debug.LogError(e);
+        }
+        catch (UnityFileName.InvalidFileNameException e)
+        {
+            GetComponent<PopupMessage>().ShowPopup(e.Message, PopupMessage.MessageType.error);
             Debug.LogError(e);
         }
         catch (System.Exception e)
@@ -246,10 +261,10 @@ public class GameManager : MonoBehaviour, ILoadScene
         try
         {
             bool isCustom = (bool)obj[0];
-            Items items = null;
+            CalcFormat items = null;
             if (isCustom)
             {
-                items = new Items(obj?[1] as string);
+                items = new CalcFormat(obj?[1] as string);
             }
             StartCoroutine(SetInitial(items));
         }
@@ -264,7 +279,7 @@ public class GameManager : MonoBehaviour, ILoadScene
     /// </summary>
     /// <param name="items"> Initial items. </param>
     /// <returns></returns>
-    public IEnumerator SetInitial(Items items)
+    public IEnumerator SetInitial(CalcFormat format)
     {
         for (var i = 0; i < itemPanels.transform.childCount; i++)
         {
@@ -274,11 +289,12 @@ public class GameManager : MonoBehaviour, ILoadScene
             }
         }
 
+        // Wait for finish to delete.
         yield return null;
         int rowIndex = 0;
-        if (items != null)
+        if (format != null)
         {
-            foreach (Item item in items.ItemList)
+            foreach (Item item in format.ItemList)
             {
                 var clone = Instantiate(sampleItemPanel, itemPanels.transform);
                 clone.name = "ItemPanel";
@@ -294,11 +310,16 @@ public class GameManager : MonoBehaviour, ILoadScene
                         = item.Operators;
                 }
                 clone.GetComponentInChildren<ItemName>().Name = item.ItemName;
-                clone.GetComponentInChildren<ItemUnit>().Unit
-                        = item.Unit;
+                clone.GetComponentInChildren<ItemNumber>().Number = item.Number;
+                clone.GetComponentInChildren<ItemUnit>().Unit = item.Unit;
 
                 rowIndex++;
             }
+
+            resultItemPanel.GetComponentInChildren<ItemName>().Name
+              = format.Result.ItemName;
+            resultItemPanel.GetComponentInChildren<ItemUnit>().Unit
+              = format.Result.Unit;
         }
         else
         {

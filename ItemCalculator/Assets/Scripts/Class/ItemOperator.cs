@@ -17,6 +17,9 @@ namespace ItemCalculator
             multiplication
         }
 
+        /// <summary>
+        /// Oeprator.
+        /// </summary>
         public Operators Operator
         {
             get

@@ -1,18 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace ItemCalculator
 {
     /// <summary>
     /// Calculator item.
     /// </summary>
+    [Serializable]
     public class Item
     {
         public Item()
         {
             this.Operators = ItemOperator.Operators.plus;
             this.ItemName = "";
+            this.Number = null;
             this.Unit = "";
         }
 
@@ -29,6 +32,15 @@ namespace ItemCalculator
         /// Item name.
         /// </summary>
         public string ItemName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Number.
+        /// </summary>
+        public float? Number
         {
             get;
             set;
