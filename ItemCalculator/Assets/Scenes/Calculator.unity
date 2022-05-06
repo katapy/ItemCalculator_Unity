@@ -5000,6 +5000,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1756094381}
   - component: {fileID: 1756094382}
+  - component: {fileID: 1756094383}
   m_Layer: 0
   m_Name: Calculator
   m_TagString: Untagged
@@ -5042,6 +5043,19 @@ MonoBehaviour:
   enterButton: {fileID: 2062557729}
   saveButton: {fileID: 0}
   customButton: {fileID: 322345578}
+--- !u!114 &1756094383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1756094380}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa8415c05e74c41ae968f6c2e9838513, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  popupCanvas: {fileID: 3361688872632268379, guid: 43fe5d2d2d1d345fdb3e7eaf51e258da, type: 3}
 --- !u!1 &1764113146
 GameObject:
   m_ObjectHideFlags: 0

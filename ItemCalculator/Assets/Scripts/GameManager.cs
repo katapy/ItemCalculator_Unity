@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -138,7 +139,9 @@ public class GameManager : MonoBehaviour, ILoadScene
         AdjustPanelSize();
 
         // resetItemPanel.
+        resultItemPanel.GetComponentInChildren<ItemName>().Name = "";
         resultItemPanel.GetComponentInChildren<ItemNumber>().Number = null;
+        resultItemPanel.GetComponentInChildren<ItemUnit>().Unit = "";
     }
 
     /// <summary>
@@ -146,49 +149,64 @@ public class GameManager : MonoBehaviour, ILoadScene
     /// </summary>
     private void Calc()
     {
-        float result = 0.0f;
-        int count = 0;
-        for (var i = 0; i < itemPanels.transform.childCount; i++)
+        try
         {
-            if (itemPanels.transform.GetChild(i).name != "ItemPanel")
+            float result = 0.0f;
+            int count = 0;
+            for (var i = 0; i < itemPanels.transform.childCount; i++)
             {
-                continue;
-            }
-            if (itemPanels.transform.GetChild(i).
-                    GetComponentInChildren<ItemNumber>().Number == null)
-            {
-                continue;
-            }
-
-            count++;
-
-            float value = itemPanels.transform.GetChild(i).
-                    GetComponentInChildren<ItemNumber>().Number.Value;
-
-            if (count == 1)
-            {
-                result = value;
-            }
-            else
-            {
-                switch (itemPanels.transform.GetChild(i).
-                    GetComponentInChildren<ItemOperator>().Operator)
+                if (itemPanels.transform.GetChild(i).name != "ItemPanel")
                 {
-                    case ItemOperator.Operators.plus:
-                        result += value;
-                        break;
-                    case ItemOperator.Operators.minus:
-                        result -= value;
-                        break;
-                    case ItemOperator.Operators.multiplication:
-                        result *= value;
-                        break;
+                    continue;
+                }
+                if (itemPanels.transform.GetChild(i).
+                        GetComponentInChildren<ItemNumber>().Number == null)
+                {
+                    throw new ArgumentNullException("Number");
+                }
 
+                count++;
+
+                float value = itemPanels.transform.GetChild(i).
+                        GetComponentInChildren<ItemNumber>().Number.Value;
+
+                if (count == 1)
+                {
+                    result = value;
+                }
+                else
+                {
+                    switch (itemPanels.transform.GetChild(i).
+                        GetComponentInChildren<ItemOperator>().Operator)
+                    {
+                        case ItemOperator.Operators.plus:
+                            result += value;
+                            break;
+                        case ItemOperator.Operators.minus:
+                            result -= value;
+                            break;
+                        case ItemOperator.Operators.multiplication:
+                            result *= value;
+                            break;
+
+                    }
                 }
             }
-        }
 
-        resultItemPanel.GetComponentInChildren<ItemNumber>().Number = result;
+            resultItemPanel.GetComponentInChildren<ItemNumber>().Number = result;
+        }
+        catch(ArgumentNullException e)
+        {
+            string message = $"{e.ParamName} is not input.";
+            GetComponent<PopupMessage>().ShowPopup(message, PopupMessage.MessageType.error);
+            Debug.LogError(e);
+        }
+        catch(Exception e)
+        {
+            string message = "unexpected error.";
+            GetComponent<PopupMessage>().ShowPopup(message, PopupMessage.MessageType.error);
+            Debug.LogError(e);
+        }
     }
 
     /// <summary>
@@ -235,7 +253,7 @@ public class GameManager : MonoBehaviour, ILoadScene
 
             SceneManager.LoadScene("Agenda");
         }
-        catch (System.ArgumentNullException e)
+        catch (ArgumentNullException e)
         {
             string message = $"{e.ParamName} is not input.";
             GetComponent<PopupMessage>().ShowPopup(message, PopupMessage.MessageType.error);
