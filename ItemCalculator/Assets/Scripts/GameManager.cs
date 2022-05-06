@@ -101,8 +101,10 @@ public class GameManager : MonoBehaviour, ILoadScene
     {
         itemPanels.GetComponent<RectTransform>().sizeDelta
             = new Vector2(0, 100 * (itemPanels.transform.childCount - 1));
+
+        float height = itemPanels.transform.root.GetComponent<RectTransform>().sizeDelta.y;
         itemPanels.transform.localPosition
-            = new Vector2(0, Screen.height / 2 - 50 * itemPanels.transform.childCount - 80);
+            = new Vector2(0, height / 2 - 50 *  (itemPanels.transform.childCount - 1));
         resultItemPanel.transform.SetAsLastSibling();
     }
 
